@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Dark - Library System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================
+           DARK PREMIUM VARIABLES
+           ========================================= */
+        :root {
+            --bg-body: #020617;       /* Very Dark Slate */
+            --bg-glass: rgba(15, 23, 42, 0.6);
+            --bg-card: #0f172a;
+            --bg-input: rgba(30, 41, 59, 0.6);
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --accent: #22d3ee;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --gradient-main: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            height: 100vh; overflow: hidden;
+            /* Subtle Dark Background Mesh */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.08), transparent 25%);
+        }
+
+        /* =========================================
+           UTILITIES
+           ========================================= */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .gap-4 { gap: 16px; }
+        
+        .text-gradient {
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* Dark Glass Card */
+        .card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s ease;
+        }
+        .card:hover { border-color: var(--border-glow); box-shadow: var(--shadow-glow); }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px; border-radius: 12px; border: none; 
+            font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
+            color: white;
+        }
+        .btn-primary { 
+            background: var(--gradient-main); 
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:hover { opacity: 0.9; transform: scale(1.02); box-shadow: 0 0 15px rgba(99, 102, 241, 0.5); }
+        
+        .btn-light { 
+            background: rgba(255,255,255,0.05); color: var(--text-main); 
+            border: 1px solid var(--border-light); 
+        }
+        .btn-light:hover { background: rgba(255,255,255,0.1); }
+        
+        .btn-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.25); }
+        
+        .btn-icon { padding: 10px; border-radius: 10px; color: var(--text-muted); background: transparent; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-icon:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+
+        /* Inputs */
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+        input, select {
+            width: 100%; padding: 12px 16px; border: 1px solid var(--border-light);
+            border-radius: 12px; font-size: 0.95rem; transition: 0.2s; 
+            background: var(--bg-input); color: var(--text-main);
+            outline: none;
+        }
+        input::placeholder { color: #475569; }
+        input:focus, select:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); 
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        /* =========================================
+           LOGIN PAGE (DARK FOCUS)
+           ========================================= */
+        #login-page {
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            position: relative;
+        }
+        /* Background glow specifically for login */
+        #login-page::before {
+            content: ''; position: absolute; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1), transparent 70%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1;
+        }
+        .login-box {
+            width: 420px; padding: 48px; 
+            border-radius: var(--radius-xl);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+
+        /* =========================================
+           LAYOUT & SIDEBAR
+           ========================================= */
+        #app-layout { display: flex; position: relative; height: 100vh; }
+        
+        /* Floating Sidebar */
+        aside {
+            width: 280px; 
+            position: fixed; top: 24px; left: 24px; bottom: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex; flex-direction: column;
+            z-index: 50;
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(10px);
+        }
+        
+        .brand { 
+            padding: 32px 28px; font-size: 1.5rem; font-weight: 800; 
+            color: var(--text-main); letter-spacing: -0.5px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .brand-dot {
+            width: 12px; height: 12px; background: var(--gradient-main); border-radius: 50%;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+        }
+        
+        .nav-menu { flex: 1; padding: 0 16px; overflow-y: auto; }
+        .nav-item {
+            display: flex; align-items: center; padding: 14px 18px; margin-bottom: 6px;
+            color: var(--text-muted); font-weight: 600; border-radius: 12px;
+            cursor: pointer; transition: 0.2s; font-size: 0.95rem;
+        }
+        .nav-item svg { width: 20px; height: 20px; margin-right: 12px; stroke-width: 2; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.03); color: var(--text-main); }
+        .nav-item.active { 
+            background: rgba(99, 102, 241, 0.15); color: #a5b4fc; 
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
+        }
+        .nav-item.active svg { stroke: #a5b4fc; }
+
+        .user-section { padding: 24px; border-top: 1px solid var(--border-light); }
+        .user-card { display: flex; align-items: center; gap: 12px; }
+        .avatar {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-light);
+            display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1; margin-left: 280px; 
+            padding: 32px 40px; overflow-y: auto; height: 100vh;
+        }
+        main::-webkit-scrollbar { width: 6px; }
+        main::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        main::-webkit-scrollbar-track { background: transparent; }
+
+        .page-header { margin-bottom: 32px; }
+        h1 { font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        p.subtitle { color: var(--text-muted); font-size: 1rem; }
+
+        /* =========================================
+           DASHBOARD COMPONENTS (DARK)
+           ========================================= */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 32px;
+        }
+        .stat-card { padding: 24px; position: relative; overflow: hidden; }
+        .stat-icon-wrapper {
+            width: 56px; height: 56px; border-radius: 16px; 
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 16px;
+        }
+        .icon-gradient-1 { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+        .icon-gradient-2 { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+        .icon-gradient-3 { background: rgba(34, 211, 238, 0.15); color: #22d3ee; }
+        
+        .stat-val { font-size: 2.25rem; font-weight: 800; color: var(--text-main); line-height: 1; margin-bottom: 4px; }
+        .stat-label { color: var(--text-muted); font-weight: 500; font-size: 0.9rem; }
+        
+        .stat-badge {
+            position: absolute; top: 24px; right: 24px;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+            background: rgba(255,255,255,0.05); color: var(--text-muted);
+        }
+
+        /* =========================================
+           TABLE STYLES (DARK)
+           ========================================= */
+        .table-wrapper {
+            border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm);
+            background: var(--bg-card); border: 1px solid var(--border-light);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: rgba(15, 23, 42, 0.8); padding: 16px 24px; text-align: left;
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--text-muted); font-weight: 700; border-bottom: 1px solid var(--border-light);
+        }
+        td { padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); color: #cbd5e1; font-size: 0.95rem; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .book-cover {
+            width: 48px; height: 68px; border-radius: 8px; object-fit: cover;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 1px solid var(--border-light);
+        }
+        
+        .badge {
+            padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        }
+        .badge-active { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.2); }
+        .badge-returned { background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.1); }
+
+        /* =========================================
+           MODALS & TOAST
+           ========================================= */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+            z-index: 100; display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+        .modal {
+            width: 90%; max-width: 500px; padding: 32px;
+            border-radius: var(--radius-xl); background: #0f172a;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-light);
+            transform: scale(0.95); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay.open .modal { transform: scale(1); }
+        .modal-header { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; text-align: center; color: var(--text-main); }
+
+        #toast-container { position: fixed; top: 30px; right: 30px; z-index: 200; }
+        .toast {
+            background: #1e293b; padding: 16px 24px; border-radius: 12px; margin-bottom: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            display: flex; align-items: center; gap: 12px; min-width: 320px;
+            border-left: 4px solid; color: var(--text-main);
+            animation: slideIn 0.3s ease;
+        }
+        .toast.success { border-color: #22d3ee; }
+        .toast.error { border-color: #f87171; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- LOGIN VIEW (DARK) -->
+    <div id="login-page">
+        <div class="login-box">
+            <div class="brand" style="justify-content: center; margin-bottom: 10px;">
+                <div class="brand-dot"></div>
+                <span class="text-gradient">Lumina Dark</span>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 32px;">Sistem Manajemen Perpustakaan Premium</p>
+            <form id="login-form">
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="username" placeholder="Masukan username" required autocomplete="off">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                    Masuk Dashboard
+                </button>
+                <p style="margin-top: 20px; font-size: 0.85rem; color: var(--text-muted);">
+                    Default: <b>admin</b> / <b>admin123</b>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- APP VIEW -->
+    <div id="app-layout" class="hidden">
+        <!-- Floating Sidebar -->
+        <aside>
+            <div class="brand">
+                <div class="brand-dot"></div>
+                Lumina
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="app.nav('dashboard')" id="nav-dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </div>
+                <div class="nav-item" onclick="app.nav('books')" id="nav-books">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Koleksi Buku
+                </div>
+                <div class="nav-item" onclick="app.nav('loans')" id="nav-loans">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    Peminjaman
+                </div>
+            </nav>
+            <div class="user-section">
+                <div class="user-card">
+                    <div class="avatar">AD</div>
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">Admin</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Dashboard -->
+            <div id="view-dashboard">
+                <div class="page-header">
+                    <h1>Dashboard Overview</h1>
+                    <p class="subtitle">Ringkasan statistik perpustakaan Anda hari ini.</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <div class="stat-icon-wrapper icon-gradient-1">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        </div>
+                        <div class="stat-val" id="stat-total-books">0</div>
+                        <div class="stat-label">Total Judul Buku</div>
+                        <div class="stat-badge">Database Fisik</div>
+                    </div>
+                    
+                    <div class="card stat-card">
+                        <div class="stat-icon-wrapper icon-gradient-2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="stat-val" id="stat-active-loans" style="color: #f472b6;">0</div>
+                        <div class="stat-label">Sedang Dipinjam</div>
+                        <div class="stat-badge">Aktif</div>
+                    </div>
+                    
+                    <div class="card stat-card">
+                        <div class="stat-icon-wrapper icon-gradient-3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <div class="stat-val" id="stat-returned" style="color: #22d3ee;">0</div>
+                        <div class="stat-label">Selesai Transaksi</div>
+                        <div class="stat-badge">Riwayat</div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 24px;">
+                    <div class="flex justify-between items-center" style="margin-bottom: 20px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Aktivitas Terkini</h3>
+                        <button onclick="app.nav('loans')" class="btn btn-light btn-sm">Lihat Semua</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Peminjam</th>
+                                    <th>Buku</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recent-loans"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books View -->
+            <div id="view-books" class="hidden">
+                <div class="page-header flex justify-between items-center">
+                    <div>
+                        <h1>Koleksi Buku</h1>
+                        <p class="subtitle">Kelola database literatur dan stok.</p>
+                    </div>
+                    <button onclick="booksManager.openModal()" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Tambah Buku
+                    </button>
+                </div>
+
+                <div class="card" style="padding: 24px;">
+                    <div class="flex justify-between items-center" style="margin-bottom: 24px;">
+                        <div style="position: relative; width: 300px;">
+                            <input type="text" id="search-book" placeholder="Cari buku..." onkeyup="booksManager.search()" style="padding-left: 40px;">
+                            <svg width="18" height="18" style="position: absolute; left: 14px; top: 13px; color: #64748b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cover</th>
+                                    <th>Informasi Buku</th>
+                                    <th>Kategori</th>
+                                    <th>Stok</th>
+                                    <th style="text-align: right;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="books-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loans View -->
+            <div id="view-loans" class="hidden">
+                <div class="page-header flex justify-between items-center">
+                    <div>
+                        <h1>Peminjaman</h1>
+                        <p class="subtitle">Catat dan monitoring sirkulasi buku.</p>
+                    </div>
+                    <button onclick="loansManager.openModal()" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        Input Peminjaman
+                    </button>
+                </div>
+
+                <div class="card" style="padding: 24px;">
+                    <div class="flex justify-between items-center" style="margin-bottom: 24px;">
+                        <div style="position: relative; width: 300px;">
+                            <input type="text" id="search-loan" placeholder="Cari nama peminjam..." onkeyup="loansManager.search()" style="padding-left: 40px;">
+                            <svg width="18" height="18" style="position: absolute; left: 14px; top: 13px; color: #64748b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Peminjam</th>
+                                    <th>Buku</th>
+                                    <th>Tanggal</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loans-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modal-book" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-header" id="modal-book-title">Tambah Buku</h3>
+            <form id="form-book">
+                <input type="hidden" id="book-id">
+                <div class="form-group">
+                    <label class="form-label">Judul Buku</label>
+                    <input type="text" id="book-title" placeholder="Masukkan judul lengkap" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Penulis</label>
+                    <input type="text" id="book-author" placeholder="Nama penulis" required>
+                </div>
+                <div class="flex gap-4">
+                    <div class="form-group" style="flex:1">
+                        <label class="form-label">Kategori</label>
+                        <select id="book-category">
+                            <option value="Fiksi">Fiksi</option>
+                            <option value="Sains">Sains</option>
+                            <option value="Sejarah">Sejarah</option>
+                            <option value="Teknologi">Teknologi</option>
+                            <option value="Bisnis">Bisnis</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label class="form-label">Stok</label>
+                        <input type="number" id="book-stock" min="0" placeholder="0">
+                    </div>
+                </div>
+                <div class="flex justify-between" style="margin-top: 32px;">
+                    <button type="button" onclick="booksManager.closeModal()" class="btn btn-light">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-loan" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-header">Catat Peminjaman</h3>
+            <form id="form-loan">
+                <div class="form-group">
+                    <label class="form-label">Nama Peminjam</label>
+                    <input type="text" id="loan-member" placeholder="Nama anggota" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pilih Buku</label>
+                    <select id="loan-book-select" required>
+                        <option value="">-- Pilih Buku --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tanggal Pinjam</label>
+                    <input type="date" id="loan-date" required>
+                </div>
+                <div class="flex justify-between" style="margin-top: 32px;">
+                    <button type="button" onclick="loansManager.closeModal()" class="btn btn-light">Batal</button>
+                    <button type="submit" class="btn btn-primary">Proses</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- JS LOGIC (Sama seperti sebelumnya) ---
+        const DB = {
+            get: (key) => JSON.parse(localStorage.getItem(key)) || [],
+            set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
+            init: () => {
+                if (!localStorage.getItem('books')) {
+                    DB.set('books', [
+                        { id: 1, title: 'The Psychology of Money', author: 'Morgan Housel', category: 'Bisnis', stock: 4 },
+                        { id: 2, title: 'Clean Architecture', author: 'Robert Martin', category: 'Teknologi', stock: 3 },
+                        { id: 3, title: 'Sapiens', author: 'Yuval Harari', category: 'Sejarah', stock: 2 }
+                    ]);
+                }
+                if (!localStorage.getItem('loans')) DB.set('loans', []);
+            }
+        };
+
+        const UI = {
+            toast: (msg, type = 'success') => {
+                const container = document.getElementById('toast-container');
+                const el = document.createElement('div');
+                el.className = `toast ${type}`;
+                el.innerHTML = `<span style="font-weight:600">${msg}</span>`;
+                container.appendChild(el);
+                setTimeout(() => { el.style.opacity='0'; setTimeout(()=>el.remove(), 300); }, 3000);
+            },
+            showSection: (id) => {
+                document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
+                document.getElementById(`view-${id}`).classList.remove('hidden');
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.getElementById(`nav-${id}`).classList.add('active');
+            },
+            toggleModal: (id, show) => {
+                const el = document.getElementById(id);
+                if(show) el.classList.add('open');
+                else el.classList.remove('open');
+            }
+        };
+
+        const Auth = {
+            login: (e) => {
+                e.preventDefault();
+                const u = document.getElementById('username').value;
+                const p = document.getElementById('password').value;
+                if (u === 'admin' && p === 'admin123') {
+                    document.getElementById('login-page').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('login-page').classList.add('hidden');
+                        document.getElementById('app-layout').classList.remove('hidden');
+                        app.init();
+                    }, 300);
+                } else {
+                    UI.toast('Username atau password salah', 'error');
+                }
+            }
+        };
+
+        const booksManager = {
+            data: [],
+            load: () => {
+                booksManager.data = DB.get('books');
+                booksManager.render();
+            },
+            render: (q = '') => {
+                const tbody = document.getElementById('books-table-body');
+                tbody.innerHTML = '';
+                const filtered = booksManager.data.filter(b => b.title.toLowerCase().includes(q.toLowerCase()) || b.author.toLowerCase().includes(q.toLowerCase()));
+                filtered.forEach(b => {
+                    const img = `https://picsum.photos/seed/${b.title.replace(/\s/g,'')}/200/300`;
+                    const row = `
+                        <tr>
+                            <td><img src="${img}" class="book-cover"></td>
+                            <td>
+                                <div style="font-weight: 700; color: var(--text-main);">${b.title}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">${b.author}</div>
+                            </td>
+                            <td><span class="badge" style="background:rgba(255,255,255,0.05); color:#cbd5e1;">${b.category}</span></td>
+                            <td style="font-weight:bold;">${b.stock}</td>
+                            <td style="text-align: right;">
+                                <button onclick="booksManager.edit(${b.id})" class="btn btn-light btn-sm">Edit</button>
+                                <button onclick="booksManager.delete(${b.id})" class="btn btn-danger btn-sm" style="background:transparent;">Hapus</button>
+                            </td>
+                        </tr>`;
+                    tbody.innerHTML += row;
+                });
+            },
+            openModal: (id = null) => {
+                const title = document.getElementById('modal-book-title');
+                const form = document.getElementById('form-book');
+                form.reset();
+                document.getElementById('book-id').value = '';
+                if(id) {
+                    const b = booksManager.data.find(x => x.id === id);
+                    title.innerText = "Edit Buku";
+                    document.getElementById('book-id').value = b.id;
+                    document.getElementById('book-title').value = b.title;
+                    document.getElementById('book-author').value = b.author;
+                    document.getElementById('book-category').value = b.category;
+                    document.getElementById('book-stock').value = b.stock;
+                } else { title.innerText = "Tambah Buku"; }
+                UI.toggleModal('modal-book', true);
+            },
+            closeModal: () => UI.toggleModal('modal-book', false),
+            save: (e) => {
+                e.preventDefault();
+                const id = document.getElementById('book-id').value;
+                const payload = {
+                    id: id ? parseInt(id) : Date.now(),
+                    title: document.getElementById('book-title').value,
+                    author: document.getElementById('book-author').value,
+                    category: document.getElementById('book-category').value,
+                    stock: parseInt(document.getElementById('book-stock').value)
+                };
+                if(id) {
+                    const idx = booksManager.data.findIndex(x => x.id == id);
+                    booksManager.data[idx] = payload;
+                    UI.toast('Buku diperbarui');
+                } else {
+                    booksManager.data.push(payload);
+                    UI.toast('Buku ditambahkan');
+                }
+                DB.set('books', booksManager.data);
+                booksManager.closeModal();
+                booksManager.load();
+                app.updateDashboard();
+            },
+            delete: (id) => {
+                if(confirm('Hapus buku ini?')) {
+                    booksManager.data = booksManager.data.filter(x => x.id !== id);
+                    DB.set('books', booksManager.data);
+                    booksManager.load();
+                    UI.toast('Buku dihapus', 'error');
+                    app.updateDashboard();
+                }
+            },
+            edit: (id) => booksManager.openModal(id),
+            search: () => {
+                const q = document.getElementById('search-book').value;
+                booksManager.render(q);
+            }
+        };
+
+        const loansManager = {
+            data: [],
+            load: () => {
+                loansManager.data = DB.get('loans');
+                loansManager.render();
+            },
+            render: (q = '') => {
+                const tbody = document.getElementById('loans-table-body');
+                tbody.innerHTML = '';
+                const books = DB.get('books');
+                const filtered = loansManager.data.filter(l => l.member.toLowerCase().includes(q.toLowerCase())).sort((a,b) => b.id - a.id);
+                filtered.forEach(l => {
+                    const book = books.find(b => b.id === l.bookId) || { title: 'Unknown' };
+                    const badgeClass = l.status === 'Active' ? 'badge-active' : 'badge-returned';
+                    const btn = l.status === 'Active' 
+                        ? `<button onclick="loansManager.return(${l.id})" class="btn btn-primary btn-sm">Kembalikan</button>` 
+                        : `<button disabled class="btn btn-light btn-sm">Selesai</button>`;
+                    const row = `
+                        <tr>
+                            <td style="color:var(--text-muted); font-size:0.85rem;">#${l.id}</td>
+                            <td style="font-weight:600;">${l.member}</td>
+                            <td>${book.title}</td>
+                            <td style="color:var(--text-muted);">${l.date}</td>
+                            <td><span class="badge ${badgeClass}">${l.status}</span></td>
+                            <td style="text-align: right;">
+                                ${btn}
+                                <button onclick="loansManager.delete(${l.id})" class="btn btn-danger btn-sm" style="background:transparent;">Hapus</button>
+                            </td>
+                        </tr>`;
+                    tbody.innerHTML += row;
+                });
+            },
+            openModal: () => {
+                const books = DB.get('books').filter(b => b.stock > 0);
+                const select = document.getElementById('loan-book-select');
+                select.innerHTML = '<option value="">-- Pilih Buku --</option>';
+                if(books.length === 0) {
+                    select.innerHTML = '<option value="">Stok Kosong</option>';
+                    select.disabled = true;
+                } else {
+                    select.disabled = false;
+                    books.forEach(b => select.innerHTML += `<option value="${b.id}">${b.title} (Sisa: ${b.stock})</option>`);
+                }
+                document.getElementById('loan-date').valueAsDate = new Date();
+                UI.toggleModal('modal-loan', true);
+            },
+            closeModal: () => UI.toggleModal('modal-loan', false),
+            add: (e) => {
+                e.preventDefault();
+                const bookId = parseInt(document.getElementById('loan-book-select').value);
+                if(!bookId) return;
+                const allBooks = DB.get('books');
+                const bIdx = allBooks.findIndex(b => b.id === bookId);
+                if(allBooks[bIdx].stock < 1) { UI.toast('Stok habis!', 'error'); return; }
+                allBooks[bIdx].stock--;
+                DB.set('books', allBooks);
+                const loans = DB.get('loans');
+                loans.push({ id: Date.now(), bookId, member: document.getElementById('loan-member').value, date: document.getElementById('loan-date').value, status: 'Active' });
+                DB.set('loans', loans);
+                UI.toast('Peminjaman dicatat');
+                loansManager.closeModal();
+                loansManager.load();
+                booksManager.load();
+                app.updateDashboard();
+            },
+            return: (id) => {
+                if(!confirm('Kembalikan buku?')) return;
+                const loans = DB.get('loans');
+                const lIdx = loans.findIndex(l => l.id === id);
+                loans[lIdx].status = 'Returned';
+                DB.set('loans', loans);
+                const books = DB.get('books');
+                const bIdx = books.findIndex(b => b.id === loans[lIdx].bookId);
+                books[bIdx].stock++;
+                DB.set('books', books);
+                UI.toast('Buku dikembalikan');
+                loansManager.load();
+                booksManager.load();
+                app.updateDashboard();
+            },
+            delete: (id) => {
+                if(confirm('Hapus riwayat?')) {
+                    DB.set('loans', DB.get('loans').filter(l => l.id !== id));
+                    loansManager.load();
+                }
+            },
+            search: () => {
+                const q = document.getElementById('search-loan').value;
+                loansManager.render(q);
+            }
+        };
+
+        const app = {
+            init: () => {
+                DB.init();
+                app.updateDashboard();
+                booksManager.load();
+                UI.toast('Selamat datang di Lumina Dark');
+            },
+            nav: (page) => {
+                UI.showSection(page);
+                if(page === 'loans') loansManager.load();
+                if(page === 'dashboard') app.updateDashboard();
+            },
+            logout: () => location.reload(),
+            updateDashboard: () => {
+                const books = DB.get('books');
+                const loans = DB.get('loans');
+                document.getElementById('stat-total-books').innerText = books.length;
+                document.getElementById('stat-active-loans').innerText = loans.filter(l => l.status === 'Active').length;
+                document.getElementById('stat-returned').innerText = loans.filter(l => l.status === 'Returned').length;
+                
+                const tbody = document.getElementById('dashboard-recent-loans');
+                tbody.innerHTML = '';
+                const recent = loans.slice(-5).reverse();
+                recent.forEach(l => {
+                    const book = books.find(b => b.id === l.bookId) || { title: '?' };
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="color:var(--text-muted); font-size:0.85rem;">#${l.id}</td>
+                            <td>${l.member}</td>
+                            <td>${book.title}</td>
+                            <td><span class="badge ${l.status === 'Active' ? 'badge-active' : 'badge-returned'}">${l.status}</span></td>
+                        </tr>`;
+                });
+            }
+        };
+
+        document.getElementById('login-form').addEventListener('submit', Auth.login);
+        document.getElementById('form-book').addEventListener('submit', booksManager.save);
+        document.getElementById('form-loan').addEventListener('submit', loansManager.add);
+    </script>
+</body>
+</html>
